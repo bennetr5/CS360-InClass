@@ -2,13 +2,19 @@ import tkinter as tk
 import json
 from json import JSONDecodeError
 
-class Message(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Message App")
-        self.geometry("350x300")
-        self.messageFile = "messages.json"
+MESSAGE_FILE = "messages.json"
+WINDOW_TITLE = "Message App"
+WINDOW_SIZE = "350x300"
 
+
+class Message(tk.Tk):
+    # Simple Tkinter app for sending and viewing text messages stored in a JSON file.
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.title(WINDOW_TITLE)
+        self.geometry(WINDOW_SIZE)
+        self.messageFile = MESSAGE_FILE
         self.messages = self.loadMessages()
 
         self.userLabel = tk.Label(self, text="Send message to:")
@@ -31,7 +37,7 @@ class Message(tk.Tk):
 
         self.outputBox = tk.Text(self, height=6, width=40, state="disabled", wrap="word")
         self.outputBox.pack(pady=10)
-
+    
     def loadMessages(self):
         try:
             with open(self.messageFile, "r", encoding="utf-8") as f:
@@ -44,33 +50,34 @@ class Message(tk.Tk):
         with open(self.messageFile, "w", encoding="utf-8") as f:
             json.dump(self.messages, f, indent=2, ensure_ascii=False)
 
+    def validateUsernameAndMessages(self, username, messages):
+        if not username:
+            self.dislplayOutput("Please enter a username.")
+            return False
+        if not messages:
+            self.dislplayOutput(f"No messages found for {username}.")
+            return False
+        return True
+
     def sendMsg(self):
         user = self.userEntry.get().strip()
-        message = self.msgEntry.get().strip()
-        if not user or not message:
-            self.display_output("Please enter both a user and a message.")
-            return
+        messages = self.msgEntry.get().strip()
+        if self.validateUsernameAndMessages(user, messages):
+            self.messages.setdefault(user, []).append(messages)
+            self.uploadMessages()
 
-        self.messages.setdefault(user, []).append(message)
-        self.uploadMessages()
-
-        self.display_output(f"Message sent to {user}: {message}")
-        self.msgEntry.delete(0, tk.END)
-
+            self.dislplayOutput(f"Message sent to {user}: {messages}")
+            self.msgEntry.delete(0, tk.END)
+    
     def viewMessages(self):
         user = self.userEntry.get().strip()
-        if not user:
-            self.display_output("Please enter a username to view their messages.")
-            return
-
         messages = self.messages.get(user)
-        if not messages:
-            self.display_output(f"No messages found for {user}.")
-        else:
-            display_text = f"Messages for {user}:\n" + "\n".join(f"- {m}" for m in messages)
-            self.display_output(display_text)
+        if self.validateUsernameAndMessages(user, messages):
+            displayText = f"Messages for {user}:\n" + "\n".join(f"- {m}" for m in messages)
+            self.dislplayOutput(displayText)
+    
 
-    def display_output(self, text):
+    def _dislplayOutput(self, text):
         self.outputBox.config(state="normal")
         self.outputBox.delete(1.0, tk.END)
         self.outputBox.insert(tk.END, text)

@@ -105,7 +105,48 @@ class LoginApp(tk.Tk):
         self.save_credentials()
         messagebox.showinfo("Success", "Account created successfully!", parent=self.signup_window)
         self.signup_window.destroy()
+         def open_del_window(self):
+        self.del_window = tk.Toplevel(self)
+        self.del_window.title("Delete Account")
+        self.del_window.geometry("300x180")
+
+        # Username
+        tk.Label(self.del_window, text="Username").grid(row=0, column=0, padx=10, pady=10, sticky="e")
+        self.del_username_entry = tk.Entry(self.del_window)
+        self.del_username_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        # Password
+        tk.Label(self.del_window, text="Password").grid(row=1, column=0, padx=10, pady=10, sticky="e")
+        self.del_password_entry = tk.Entry(self.del_window, show="*")
+        self.del_password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        # Delete Account Button
+        tk.Button(self.del_window, text="Delete Account", command=self.del_account).grid(row=3, column=0, columnspan=2, pady=10)
+
+
+    def delete_account(self):
+        username = self.del_username_entry.get()
+        password = self.del_password_entry.get()
+
+        if username not in self.credentials:
+            messagebox.showerror("Error", "Account doesnt exist", parent=self.del_window)
+            return
+
+        if self.credentials [username] != password:
+            messagebox.showerror("Error", "Incorrect Password.", parent=self.signup_window)
+            return
+
+        confirm = messagebox.askyesno("Confirm Deleter", f"Are you sure you want to delete'{username}'?")
+        if not confirm:
+            return
+        
+        del self.credentials[username]
+        self.save_credentials()
+        messagebox.showinfo("Success", "Account deleted successfully!", parent=self.del_window)
+        self.del_window.destroy()
+
 
 if __name__ == "__main__":
     app = LoginApp()
     app.mainloop()
+

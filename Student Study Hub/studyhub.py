@@ -7,7 +7,7 @@ class StudyGroupApp(tk.Tk):
         super().__init__()
 
         self.json_file = json_file
-        self.load_data()
+        self.load_credentials()
 
         self.title("Study Group")
         self.geometry("500x500")
@@ -15,36 +15,36 @@ class StudyGroupApp(tk.Tk):
         self.create_session()
         self.update_user_list()
 
-    def load_data(self):
+    def load_credentials(self):
         if not os.path.exists(self.json_file):
             self.description = ""
             self.users = []
-            self.save_data()
+            self.save_credentials()
         else:
             with open(self.json_file, "r") as f:
                 data = json.load(f)
             self.description = data.get("description", "")
             self.users = data.get("users", [])
 
-    def save_data(self):
+    def save_credentials(self):
         with open(self.json_file, "w") as f:
             json.dump({"description": self.description, "users": self.users}, f, indent=4)
 
     def add_user(self, name):
         if name and name not in self.users:
             self.users.append(name)
-            self.save_data()
+            self.save_credentials()
             self.update_user_list()
 
     def remove_user(self, name):
         if name in self.users:
             self.users.remove(name)
-            self.save_data()
+            self.save_credentials()
             self.update_user_list()
 
     def set_description(self, text):
         self.description = text
-        self.save_data()
+        self.save_credentials()
 
     def create_session(self):
         #description

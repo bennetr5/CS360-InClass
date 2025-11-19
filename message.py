@@ -38,7 +38,7 @@ class Message(tk.Tk):
         self.outputBox = tk.Text(self, height=6, width=40, state="disabled", wrap="word")
         self.outputBox.pack(pady=10)
     
-    def loadMessages(self):
+    def getMessages(self):
         try:
             with open(self.messageFile, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -46,7 +46,7 @@ class Message(tk.Tk):
         except (FileNotFoundError, JSONDecodeError):
             return {}
 
-    def uploadMessages(self):
+    def saveMessages(self):
         with open(self.messageFile, "w", encoding="utf-8") as f:
             json.dump(self.messages, f, indent=2, ensure_ascii=False)
 
@@ -77,7 +77,7 @@ class Message(tk.Tk):
             self.dislplayOutput(displayText)
     
 
-    def _dislplayOutput(self, text):
+    def _displayOutput(self, text):
         self.outputBox.config(state="normal")
         self.outputBox.delete(1.0, tk.END)
         self.outputBox.insert(tk.END, text)

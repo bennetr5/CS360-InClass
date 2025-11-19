@@ -10,8 +10,12 @@ class Profile:
         self.email = new_email
 
     def add_course(self, course_name: str) -> None:
-        self.courses.append(course_name)
+        self.courses = list({*self.courses, course_name})
 
     def remove_course(self, course_name: str) -> None:
         if course_name in self.courses:
             self.courses.remove(course_name)
+
+    def has_course(self, course_name: str) -> bool:
+        return course_name in self.courses
+    
